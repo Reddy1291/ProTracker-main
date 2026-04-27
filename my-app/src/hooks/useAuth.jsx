@@ -46,9 +46,6 @@ export function AuthProvider({ children }) {
 
       const response = await userAPI.signup(userData);
       if (response.success) {
-        const transformedUser = transformUser(response.user);
-        setUser(transformedUser);
-        localStorage.setItem('protrackr-user', JSON.stringify(transformedUser));
         return true;
       }
       throw new Error(response.message || "Account creation failed");

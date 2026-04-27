@@ -16,7 +16,10 @@ export function LoginForm() {
   const { theme } = useTheme()
   const isDark = theme === "dark"
   const [showPassword, setShowPassword] = useState(false)
+  const [showSignupPassword, setShowSignupPassword] = useState(false)
+  const [showSignupConfirmPassword, setShowSignupConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState("login")
 
   // Error state for inline error messages
   const [loginError, setLoginError] = useState("")
@@ -104,7 +107,9 @@ export function LoginForm() {
     setIsLoading(true)
     try {
       await signup(signupData.name, signupData.email, signupData.password, signupData.role, signupData.department, signupData.year)
-      toast.success("Account created successfully!")
+      toast.success("Account created successfully! Please log in.")
+      setLoginData(prev => ({ ...prev, email: signupData.email, password: "" }))
+      setActiveTab("login")
     } catch (error) {
       const msg = error.message || "An error occurred. Please try again."
       setSignupError(msg)
@@ -689,7 +694,7 @@ export function LoginForm() {
             </p>
           </div>
 
-          <Tabs defaultValue="login" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList
               className="grid w-full grid-cols-2"
               style={{
@@ -945,30 +950,68 @@ export function LoginForm() {
 
                 <div>
                   <label style={labelStyle} htmlFor="signup-password">Password</label>
-                  <input
-                    id="signup-password"
-                    type="password"
-                    placeholder="Create a password (min. 8 characters)"
-                    value={signupData.password}
-                    onChange={e => { setSignupData({ ...signupData, password: e.target.value }); setSignupError("") }}
-                    required
-                    className="search-input-glow"
-                    style={signupError && signupError.toLowerCase().includes('password') ? inputErrorStyle : inputStyle}
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      id="signup-password"
+                      type={showSignupPassword ? "text" : "password"}
+                      placeholder="Create a password (min. 8 characters)"
+                      value={signupData.password}
+                      onChange={e => { setSignupData({ ...signupData, password: e.target.value }); setSignupError("") }}
+                      required
+                      className="search-input-glow"
+                      style={{ ...(signupError && signupError.toLowerCase().includes('password') ? inputErrorStyle : inputStyle), paddingRight: 40 }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowSignupPassword(!showSignupPassword)}
+                      style={{
+                        position: 'absolute',
+                        right: 8,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(26,16,64,0.4)',
+                        cursor: 'pointer',
+                        padding: 4,
+                      }}
+                    >
+                      {showSignupPassword ? <EyeOff style={{ width: 16, height: 16 }} /> : <Eye style={{ width: 16, height: 16 }} />}
+                    </button>
+                  </div>
                 </div>
 
                 <div>
                   <label style={labelStyle} htmlFor="signup-confirm">Confirm Password</label>
-                  <input
-                    id="signup-confirm"
-                    type="password"
-                    placeholder="Confirm your password"
-                    value={signupData.confirmPassword}
-                    onChange={e => { setSignupData({ ...signupData, confirmPassword: e.target.value }); setSignupError("") }}
-                    required
-                    className="search-input-glow"
-                    style={signupError && signupError.toLowerCase().includes('match') ? inputErrorStyle : inputStyle}
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      id="signup-confirm"
+                      type={showSignupConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm your password"
+                      value={signupData.confirmPassword}
+                      onChange={e => { setSignupData({ ...signupData, confirmPassword: e.target.value }); setSignupError("") }}
+                      required
+                      className="search-input-glow"
+                      style={{ ...(signupError && signupError.toLowerCase().includes('match') ? inputErrorStyle : inputStyle), paddingRight: 40 }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowSignupConfirmPassword(!showSignupConfirmPassword)}
+                      style={{
+                        position: 'absolute',
+                        right: 8,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(26,16,64,0.4)',
+                        cursor: 'pointer',
+                        padding: 4,
+                      }}
+                    >
+                      {showSignupConfirmPassword ? <EyeOff style={{ width: 16, height: 16 }} /> : <Eye style={{ width: 16, height: 16 }} />}
+                    </button>
+                  </div>
                 </div>
 
                 <button
